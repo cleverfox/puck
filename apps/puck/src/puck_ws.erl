@@ -4,6 +4,7 @@
          websocket_init/1, websocket_handle/2,
          websocket_info/2
         ]).
+-export([ws_json/1]).
 
 init(Req, Opts) ->
     {cowboy_websocket, Req, Opts,
@@ -48,45 +49,45 @@ websocket_info(_Info, State) ->
 
 ws_json_reply(JSON, State) ->
   case ws_json(JSON) of
-    {text, Text} ->
-      {reply, {text, Text}, State}
+    {json, Text} ->
+      {reply, {text, jsx:encode(Text)}, State}
   end.
 
-ws_json(#{<<"watch">>:=ID }=JSON) ->
-  Send=case maps:get(<<"send">>,JSON,<<"full">>) of
-         <<"full">> -> full;
-         _ -> changes
+ws_json([<<"watch">>, ID|Args]) ->
+  Send=case lists:member(<<"changes">>,Args) of
+         false -> full;
+         true -> changes
        end,
   gen_server:cast(puck_ws_dispatcher,
                   {subscribe, object, ID, self(), Send}
                  ),
-  case maps:get(<<"preload">>,JSON,false) of
+  case lists:member(<<"preload">>,Args) of
     true ->
-      self() ! {json, #{<<"get">> => ID }};
+      self() ! {json, [<<"get">>, ID]};
     _ -> ok
   end,
-  {text, jsx:encode(#{ ok=>true, sub_id=>ID })};
+  {json, #{ ok=>true, sub_id=>ID }};
 
-ws_json(#{<<"get">> := ID }) ->
+ws_json([<<"get">>, ID]) ->
   R=case gen_server:call(puck_db,{get,ID}) of
       not_found -> #{ ok=>false, res=>not_found };
       {ok, Data} ->
         #{ ok=>true, res=>Data }
     end,
-  {text, jsx:encode(R)};
+  {json, R};
 
-ws_json(#{<<"put">> := ID, <<"data">> := Data}) ->
+ws_json([<<"put">>, ID, Data]) ->
   {ok,_}=gen_server:call(puck_db,{put,ID,Data}),
-  {text, <<"OK">>};
+  {json, <<"OK">>};
 
-ws_json(#{<<"del">> := ID}) ->
-  {ok,_}=gen_server:call(puck_db,{delete,ID}),
-  {text, <<"OK">>};
-
-ws_json(#{<<"replace">> := ID, <<"data">> := Data}) ->
+ws_json([<<"replace">>, ID, Data]) ->
   {ok,_}=gen_server:call(puck_db,{replace,ID,Data}),
-  {text, <<"OK">>};
+  {json, <<"OK">>};
+
+ws_json([<<"del">>, ID]) ->
+  ok=gen_server:call(puck_db,{delete,ID}),
+  {json, <<"OK">>};
 
 ws_json(_) ->
-  {text, jsx:encode(#{ ok=>false, error=><<"unhandled">> })}.
+  {json, jsx:encode(#{ ok=>false, error=><<"unhandled">> })}.
 

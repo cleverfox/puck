@@ -27,7 +27,7 @@ start_link() ->
 %% ------------------------------------------------------------------
 
 init(_) ->
-  {ok, DBH} = cowdb:open("puck.db"),
+  {ok, DBH} = cowdb:open("puck.db",[auto_compact]),
   {ok, #{
      dbh => DBH
     }
