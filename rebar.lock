@@ -1,0 +1,30 @@
+{"1.1.0",
+[{<<"cbt">>,
+  {git,"https://github.com/benoitc/cbt.git",
+       {ref,"3b3754c593ded5cac845cca9b9db7f34f05e881d"}},
+  1},
+ {<<"cowboy">>,{pkg,<<"cowboy">>,<<"2.8.0">>},0},
+ {<<"cowdb">>,
+  {git,"https://github.com/refuge/cowdb.git",
+       {ref,"40d72119a59407c7dddc140443b518a90338e347"}},
+  0},
+ {<<"cowlib">>,{pkg,<<"cowlib">>,<<"2.9.1">>},1},
+ {<<"jsx">>,
+  {git,"https://github.com/cleverfox/jsx.git",
+       {ref,"362f0b4aa9d982a33dcb3e7d8ced80ec755b64a1"}},
+  0},
+ {<<"ranch">>,{pkg,<<"ranch">>,<<"1.7.1">>},1},
+ {<<"tiny_pq">>,
+  {git,"https://github.com/ChicagoBoss/tiny_pq.git",
+       {ref,"276342c938ee9e71f69b135a8744eba5bbc506cd"}},
+  1},
+ {<<"tinymq">>,
+  {git,"https://github.com/ChicagoBoss/tinymq",
+       {ref,"0e47ab2ffb90d41885258e8940c3c8de9ba40637"}},
+  0}]}.
+[
+{pkg_hash,[
+ {<<"cowboy">>, <<"F3DC62E35797ECD9AC1B50DB74611193C29815401E53BAC9A5C0577BD7BC667D">>},
+ {<<"cowlib">>, <<"61A6C7C50CF07FDD24B2F45B89500BB93B6686579B069A89F88CB211E1125C78">>},
+ {<<"ranch">>, <<"6B1FAB51B49196860B733A49C07604465A47BDB78AA10C1C16A3D199F7F8C881">>}]}
+].
