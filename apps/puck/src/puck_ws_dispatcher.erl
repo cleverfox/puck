@@ -40,7 +40,7 @@ handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
 handle_cast({obj_changed, ID, delete}, #{addrsub:=AS}=State) ->
-  Subscribers=maps:get(ID,AS),
+  Subscribers=maps:get(ID,AS,[]),
   TxJSAll=jsx:encode(#{event=><<"obj_ch">>, id=>ID, exists=>false, data=>null}),
   lists:foreach(fun
                   ({Pid, changes}) ->
